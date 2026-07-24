@@ -2734,15 +2734,24 @@ pub unsafe extern "C" fn zcashlc_redact_pczt_for_signer(
         let redacted_pczt = Redactor::new(pczt)
             .redact_global_with(|mut r| r.redact_proprietary("zcash_client_backend:proposal_info"))
             .redact_orchard_with(|mut r| {
+                r.clear_zkproof();
+                r.clear_bsk();
                 r.redact_actions(|mut ar| {
                     ar.clear_spend_witness();
+                    ar.clear_spend_dummy_sk();
                     ar.redact_output_proprietary("zcash_client_backend:output_info");
                 })
             })
             .redact_sapling_with(|mut r| {
-                r.redact_spends(|mut sr| sr.clear_witness());
+                r.clear_bsk();
+                r.redact_spends(|mut sr| {
+                    sr.clear_zkproof();
+                    sr.clear_dummy_ask();
+                    sr.clear_witness();
+                });
                 r.redact_outputs(|mut or| {
-                    or.redact_proprietary("zcash_client_backend:output_info")
+                    or.clear_zkproof();
+                    or.redact_proprietary("zcash_client_backend:output_info");
                 });
             })
             .redact_transparent_with(|mut r| {

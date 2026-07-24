@@ -6,6 +6,9 @@ and this library adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+- `zcashlc_redact_pczt_for_signer` now additionally clears zero-knowledge proofs and binding signing keys from the Orchard and Sapling bundles, and the signing keys for dummy spends (`dummy_sk` / `dummy_ask`), reducing the size of the redacted PCZT sent to hardware signers. Dummy spends are signed by the IO Finalizer during PCZT creation, and the PCZT specification requires Signers to reject PCZTs that contain dummy spending keys. Callers must (as before) retain the unredacted PCZT and combine it with the Signer output via `zcashlc_extract_and_store_from_pczt`.
+
 ## 2.6.0-alpha.6 - 2026-06-26
 
 ### Fixed
